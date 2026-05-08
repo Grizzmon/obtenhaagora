@@ -7,24 +7,26 @@ import Image from 'next/image'
 
 const slides = [
   {
-    src: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/SLIDE1-S3SzIF8DXVBfsvUggh6hn7usNQW3Wu.png',
+    src: '/slides/hero-1.jpg',
     alt: 'BankPix - Simples, Rápido e Seguro: PIX na palma da sua mão',
   },
   {
-    src: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/SLIDE2-seMXc23B6DwiywZOAA8JdJFniHigsi.png',
+    src: '/slides/hero-2.jpg',
     alt: 'BankPix - Suporte 24 horas para te ajudar sempre',
   },
   {
-    src: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/SLIDE3-TnCg8J6f3L4lXqn0L8XmGW3piGQ6cO.png',
+    src: '/slides/hero-3.jpg',
     alt: 'BankPix - Nunca foi tão fácil ter PIX em Moçambique',
   },
 ]
 
 export function HeroSlider() {
   const [selectedIndex, setSelectedIndex] = useState(0)
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
-    Autoplay({ delay: 3000, stopOnInteraction: false }),
-  ])
+
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true },
+    [Autoplay({ delay: 3000, stopOnInteraction: false })]
+  )
 
   const scrollTo = useCallback(
     (index: number) => emblaApi && emblaApi.scrollTo(index),
@@ -38,8 +40,10 @@ export function HeroSlider() {
 
   useEffect(() => {
     if (!emblaApi) return
+
     onSelect()
     emblaApi.on('select', onSelect)
+
     return () => {
       emblaApi.off('select', onSelect)
     }
@@ -61,6 +65,8 @@ export function HeroSlider() {
                   fill
                   className="object-cover"
                   priority={index === 0}
+                  loading={index === 0 ? 'eager' : 'lazy'}
+                  quality={85}
                   sizes="100vw"
                 />
               </div>
@@ -68,6 +74,7 @@ export function HeroSlider() {
           ))}
         </div>
       </div>
+
       {/* Dots indicator */}
       <div className="flex justify-center gap-2 py-4 bg-background">
         {slides.map((_, index) => (
