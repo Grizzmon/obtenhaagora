@@ -12,10 +12,12 @@ const plans = [
     oldPrice: '999',
     price: '319',
     features: [
-      'Crie sua chave PIX',
-      'Receba do Brasil',
+      'Acesso a apenas uma chave PIX',
+      'Sistema antibloqueios',
+      'Limite de 5.000,00MZN de SAC ',
       'Saque via M-Pesa',
       'Suporte por WhatsApp',
+      'Garantia de Devoluçao de 7 dias',
     ],
     checkoutUrl: 'https://pay.kambafy.com/checkout/8e10e34b-8134-4456-9dce-efb470f3dd9b',
     highlighted: false,
@@ -29,11 +31,13 @@ const plans = [
     oldPrice: '1579',
     price: '719',
     features: [
-      'Tudo do Start +',
-      'Limites maiores',
+      'Crie mais de 10 chaves pix diferentes',
+      'Limite de SAC de 50.000,00MZN',
+      'Sistema ante bloqueio, uso Definitivo',
       'Saque M-Pesa e e-Mola',
       'Suporte prioritário 24h',
-      'Taxa de conversão premium',
+      'Atualizaçao automatica do app',
+      'Garantia de Devoluçao de 30 dias',
     ],
     checkoutUrl: 'https://pay.kambafy.com/checkout/e8ab6f89-80dc-49c1-b937-c19c3a704ba8',
     highlighted: true,
@@ -47,12 +51,13 @@ const plans = [
     oldPrice: '3799',
     price: '1099',
     features: [
-      'Tudo do Pro +',
-      'Limites ilimitados',
-      'Atendimento VIP',
-      'Gerente exclusivo',
-      'Melhores taxas',
-      'Cashback em transações',
+      'Crie e Recrie quantas chaves quiser',
+      'Sistema ante bloqueio, uso Definitivo',
+      'Sem limites de SAC',
+      'Saque no M-pesa, E-mola e Banco',
+      'Suporte prioritario 24h',
+      'Garantia de Devoluçao de 90 dias',
+      'Atualizaçoes automaticas do app',
     ],
     checkoutUrl: 'https://pay.kambafy.com/checkout/7ee14786-af98-49e1-a3b9-272d5857c3d0',
     highlighted: false,
@@ -88,7 +93,7 @@ export function PricingPlans() {
   }
 
   return (
-    <section className="w-full px-4 py-12 md:py-16">
+    <section className="w-full px-4 py-12 md:py-16 bg-background">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
@@ -103,7 +108,7 @@ export function PricingPlans() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative rounded-2xl p-6 transition-all duration-300 ${
+              className={`relative rounded-2xl p-6 flex flex-col transition-all duration-300 ${
                 plan.highlighted
                   ? 'bg-gradient-to-b from-primary/20 to-card border-2 border-primary shadow-lg shadow-primary/20'
                   : 'bg-card border border-border hover:border-primary/50'
@@ -141,7 +146,7 @@ export function PricingPlans() {
                 </div>
               </div>
 
-              <ul className="space-y-3 mb-6">
+              <ul className="space-y-3 mb-8 flex-grow">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-2">
                     <Check
@@ -154,22 +159,30 @@ export function PricingPlans() {
                 ))}
               </ul>
 
-              <a 
-                href={plan.checkoutUrl} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                onClick={() => handleTrack(plan)}
-              >
-                <Button
-                  className={`w-full py-6 text-base font-bold transition-all ${
-                    plan.highlighted
-                      ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-primary/40'
-                      : 'bg-secondary hover:bg-primary text-foreground hover:text-primary-foreground'
-                  }`}
+              <div className="space-y-3">
+                <a 
+                  href={plan.checkoutUrl} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  onClick={() => handleTrack(plan)}
                 >
-                  {plan.highlighted ? 'QUERO MEU PIX' : 'OBTER ACESSO'}
-                </Button>
-              </a>
+                  <Button
+                    className={`w-full py-6 text-base font-bold transition-all ${
+                      plan.highlighted
+                        ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-primary/40'
+                        : 'bg-secondary hover:bg-primary text-foreground hover:text-primary-foreground'
+                    }`}
+                  >
+                    {plan.highlighted ? 'QUERO MEU PIX AGORA' : 'OBTER ACESSO'}
+                  </Button>
+                </a>
+                
+                {/* NOTA DE SEGURANÇA PARA REDUZIR PEDIDOS EXPIRADOS */}
+                <p className="text-[10px] text-center text-muted-foreground leading-tight italic">
+                  Ao clicar, confirme o pagamento no seu celular <br/>
+                  via <b>M-Pesa</b> ou <b>e-Mola</b> para liberar o acesso.
+                </p>
+              </div>
             </div>
           ))}
         </div>
