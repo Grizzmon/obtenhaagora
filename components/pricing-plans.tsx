@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Zap, Sparkles, Crown } from 'lucide-react'
+import { Check, Zap, Sparkles, Crown, Smartphone } from 'lucide-react' // Adicionei o ícone Smartphone
 import { Button } from '@/components/ui/button'
 
 const plans = [
@@ -74,21 +74,12 @@ declare global {
 export function PricingPlans() {
   const handleTrack = (plan: typeof plans[0]) => {
     if (typeof window === 'undefined' || !window.fbq) return
-    
     const cleanPrice = parseFloat(plan.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0
     
-    // Evento Principal - InitiateCheckout
     window.fbq('track', 'InitiateCheckout', {
       content_name: plan.name,
       value: cleanPrice,
       currency: 'MZN',
-    })
-    
-    // Evento Customizado - Click_Plano
-    window.fbq('trackCustom', 'Click_Plano', {
-      plano: plan.name,
-      preco: cleanPrice,
-      moeda: 'MZN',
     })
   }
 
@@ -102,6 +93,16 @@ export function PricingPlans() {
           <p className="text-muted-foreground">
             Comece a receber PIX em Moçambique hoje mesmo
           </p>
+        </div>
+
+        {/* --- NOVO AVISO DE SEGURANÇA CONTRA ERRO DE NÚMERO --- */}
+        <div className="mb-10 p-4 bg-primary/10 border border-primary/20 rounded-xl flex items-center gap-4 max-w-2xl mx-auto">
+            <div className="bg-primary p-2 rounded-full text-white shrink-0">
+                <Smartphone size={20} />
+            </div>
+            <p className="text-sm text-foreground/80 leading-snug">
+                <b>Atenção:</b> No momento do pagamento, insira o número da sua conta <b>M-Pesa</b> ou <b>e-Mola</b> que tem saldo. O PIN de confirmação será enviado para esse número.
+            </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
@@ -123,23 +124,13 @@ export function PricingPlans() {
               )}
 
               <div className="text-center mb-6">
-                <div
-                  className={`inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 ${
-                    plan.highlighted
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-secondary text-primary'
-                  }`}
-                >
+                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-primary'}`}>
                   <plan.icon className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
                 <p className="text-sm text-muted-foreground">{plan.subtitle}</p>
-                
-                {/* Preços */}
                 <div className="mt-3">
-                  <p className="text-sm text-muted-foreground line-through">
-                    De {plan.oldPrice} MZN
-                  </p>
+                  <p className="text-sm text-muted-foreground line-through">De {plan.oldPrice} MZN</p>
                   <p className={`text-3xl font-bold ${plan.highlighted ? 'text-primary' : 'text-foreground'}`}>
                     {plan.price} <span className="text-lg font-normal">MZN</span>
                   </p>
@@ -149,38 +140,21 @@ export function PricingPlans() {
               <ul className="space-y-3 mb-8 flex-grow">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-2">
-                    <Check
-                      className={`w-5 h-5 flex-shrink-0 mt-0.5 ${
-                        plan.highlighted ? 'text-primary' : 'text-primary/70'
-                      }`}
-                    />
+                    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${plan.highlighted ? 'text-primary' : 'text-primary/70'}`} />
                     <span className="text-sm text-foreground">{feature}</span>
                   </li>
                 ))}
               </ul>
 
               <div className="space-y-3">
-                <a 
-                  href={plan.checkoutUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  onClick={() => handleTrack(plan)}
-                >
-                  <Button
-                    className={`w-full py-6 text-base font-bold transition-all ${
-                      plan.highlighted
-                        ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-primary/40'
-                        : 'bg-secondary hover:bg-primary text-foreground hover:text-primary-foreground'
-                    }`}
-                  >
+                <a href={plan.checkoutUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleTrack(plan)}>
+                  <Button className={`w-full py-6 text-base font-bold transition-all ${plan.highlighted ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-primary/40' : 'bg-secondary hover:bg-primary text-foreground hover:text-primary-foreground'}`}>
                     {plan.highlighted ? 'QUERO MEU PIX AGORA' : 'OBTER ACESSO'}
                   </Button>
                 </a>
                 
-                {/* NOTA DE SEGURANÇA PARA REDUZIR PEDIDOS EXPIRADOS */}
                 <p className="text-[10px] text-center text-muted-foreground leading-tight italic">
-                  Ao clicar, confirme o pagamento no seu celular <br/>
-                  via <b>M-Pesa</b> ou <b>e-Mola</b> para liberar o acesso.
+                  Use o número com saldo para receber o PIN no celular.
                 </p>
               </div>
             </div>
