@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Zap, Sparkles, Crown, Smartphone } from 'lucide-react' // Adicionei o ícone Smartphone
+import { Check, Zap, Sparkles, Crown, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const plans = [
@@ -75,7 +75,6 @@ export function PricingPlans() {
   const handleTrack = (plan: typeof plans[0]) => {
     if (typeof window === 'undefined' || !window.fbq) return
     const cleanPrice = parseFloat(plan.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0
-    
     window.fbq('track', 'InitiateCheckout', {
       content_name: plan.name,
       value: cleanPrice,
@@ -86,22 +85,22 @@ export function PricingPlans() {
   return (
     <section className="w-full px-4 py-12 md:py-16 bg-background">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-10">
+        <div className="text-center mb-6">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
             Escolha Seu Plano
           </h2>
           <p className="text-muted-foreground">
-            Comece a receber PIX em Moçambique hoje mesmo
+            Ative o seu sistema PIX e comece a faturar hoje
           </p>
         </div>
 
-        {/* --- NOVO AVISO DE SEGURANÇA CONTRA ERRO DE NÚMERO --- */}
-        <div className="mb-10 p-4 bg-primary/10 border border-primary/20 rounded-xl flex items-center gap-4 max-w-2xl mx-auto">
-            <div className="bg-primary p-2 rounded-full text-white shrink-0">
-                <Smartphone size={20} />
+        {/* ALERTA VISÍVEL COM EFEITO PULSE */}
+        <div className="mb-10 p-5 bg-yellow-50 border-2 border-yellow-400 rounded-2xl flex items-center gap-4 max-w-2xl mx-auto animate-pulse shadow-md">
+            <div className="bg-yellow-400 p-2 rounded-full text-white shrink-0">
+                <AlertTriangle size={24} />
             </div>
-            <p className="text-sm text-foreground/80 leading-snug">
-                <b>Atenção:</b> No momento do pagamento, insira o número da sua conta <b>M-Pesa</b> ou <b>e-Mola</b> que tem saldo. O PIN de confirmação será enviado para esse número.
+            <p className="text-sm md:text-base text-yellow-900 font-bold leading-tight italic">
+                ⚠️ ATENÇÃO: Na página de pagamento, insira o número da sua conta M-Pesa ou e-Mola que tem saldo (mesmo que seja diferente do seu WhatsApp).
             </p>
         </div>
 
@@ -109,29 +108,27 @@ export function PricingPlans() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative rounded-2xl p-6 flex flex-col transition-all duration-300 ${
-                plan.highlighted
-                  ? 'bg-gradient-to-b from-primary/20 to-card border-2 border-primary shadow-lg shadow-primary/20'
-                  : 'bg-card border border-border hover:border-primary/50'
+              className={`relative rounded-2xl p-6 flex flex-col transition-all duration-300 bg-card border-2 ${
+                plan.highlighted ? 'border-primary shadow-lg' : 'border-border'
               }`}
             >
               {plan.badge && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full whitespace-nowrap">
+                  <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full">
                     {plan.badge}
                   </span>
                 </div>
               )}
 
               <div className="text-center mb-6">
-                <div className={`inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 ${plan.highlighted ? 'bg-primary text-primary-foreground' : 'bg-secondary text-primary'}`}>
+                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 bg-primary text-white">
                   <plan.icon className="w-7 h-7" />
                 </div>
                 <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
                 <p className="text-sm text-muted-foreground">{plan.subtitle}</p>
                 <div className="mt-3">
                   <p className="text-sm text-muted-foreground line-through">De {plan.oldPrice} MZN</p>
-                  <p className={`text-3xl font-bold ${plan.highlighted ? 'text-primary' : 'text-foreground'}`}>
+                  <p className="text-3xl font-bold text-primary">
                     {plan.price} <span className="text-lg font-normal">MZN</span>
                   </p>
                 </div>
@@ -140,7 +137,7 @@ export function PricingPlans() {
               <ul className="space-y-3 mb-8 flex-grow">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-2">
-                    <Check className={`w-5 h-5 flex-shrink-0 mt-0.5 ${plan.highlighted ? 'text-primary' : 'text-primary/70'}`} />
+                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5 text-primary" />
                     <span className="text-sm text-foreground">{feature}</span>
                   </li>
                 ))}
@@ -148,13 +145,12 @@ export function PricingPlans() {
 
               <div className="space-y-3">
                 <a href={plan.checkoutUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleTrack(plan)}>
-                  <Button className={`w-full py-6 text-base font-bold transition-all ${plan.highlighted ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg hover:shadow-primary/40' : 'bg-secondary hover:bg-primary text-foreground hover:text-primary-foreground'}`}>
+                  <Button className="w-full py-6 text-base font-bold bg-primary hover:bg-primary/90 text-white shadow-md">
                     {plan.highlighted ? 'QUERO MEU PIX AGORA' : 'OBTER ACESSO'}
                   </Button>
                 </a>
-                
-                <p className="text-[10px] text-center text-muted-foreground leading-tight italic">
-                  Use o número com saldo para receber o PIN no celular.
+                <p className="text-[11px] text-center text-muted-foreground font-medium italic uppercase">
+                  Confirme o PIN no seu celular após clicar.
                 </p>
               </div>
             </div>
