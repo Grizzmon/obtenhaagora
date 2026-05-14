@@ -1,6 +1,6 @@
 'use client'
 
-import { Check, Zap, Sparkles, Crown, AlertTriangle } from 'lucide-react'
+import { Check, Zap, Sparkles, Crown, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 const plans = [
@@ -19,7 +19,8 @@ const plans = [
       'Suporte por WhatsApp',
       'Garantia de Devoluçao de 7 dias',
     ],
-    checkoutUrl: 'https://pay.kambafy.com/checkout/8e10e34b-8134-4456-9dce-efb470f3dd9b',
+    // SEU NOVO LINK BÁSICO
+    checkoutUrl: 'https://pay.tutora.co.mz/34a52a6f5e2e4c0f9c68b341c3cf7588',
     highlighted: false,
     badge: null,
   },
@@ -39,7 +40,8 @@ const plans = [
       'Atualizaçao automatica do app',
       'Garantia de Devoluçao de 30 dias',
     ],
-    checkoutUrl: 'https://pay.kambafy.com/checkout/e8ab6f89-80dc-49c1-b937-c19c3a704ba8',
+    // SEU NOVO LINK PRO
+    checkoutUrl: 'https://pay.tutora.co.mz/80910acdec2e4ee79c69e20342a06b48',
     highlighted: true,
     badge: 'MAIS USADO',
   },
@@ -75,86 +77,87 @@ export function PricingPlans() {
   const handleTrack = (plan: typeof plans[0]) => {
     if (typeof window === 'undefined' || !window.fbq) return
     const cleanPrice = parseFloat(plan.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0
-    window.fbq('track', 'InitiateCheckout', {
+    
+    // EVENTO PERSONALIZADO PARA VOCÊ IDENTIFICAR NO GERENCIADOR
+    window.fbq('trackCustom', 'Acesso_Pagina_Vendas_BankPix', {
       content_name: plan.name,
       value: cleanPrice,
       currency: 'MZN',
+      plano_tipo: plan.subtitle
     })
   }
 
   return (
-    <section className="w-full px-4 py-12 md:py-16 bg-background">
+    <section className="w-full px-4 py-12 md:py-20 bg-background">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-6">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Escolha Seu Plano
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4 uppercase italic">
+            Ative sua Conta
           </h2>
-          <p className="text-muted-foreground">
-            Ative o seu sistema PIX e comece a faturar hoje
+          <p className="text-muted-foreground font-medium">
+            Escolha o nível de acesso para liberar suas chaves PIX e saques.
           </p>
         </div>
 
-        {/* ALERTA VISÍVEL COM EFEITO PULSE */}
-        <div className="mb-10 p-5 bg-yellow-50 border-2 border-yellow-400 rounded-2xl flex items-center gap-4 max-w-2xl mx-auto animate-pulse shadow-md">
-            <div className="bg-yellow-400 p-2 rounded-full text-white shrink-0">
-                <AlertTriangle size={24} />
-            </div>
-            <p className="text-sm md:text-base text-yellow-900 font-bold leading-tight italic">
-                ⚠️ ATENÇÃO: Na página de pagamento, insira o número da sua conta M-Pesa ou e-Mola que tem saldo (mesmo que seja diferente do seu WhatsApp).
-            </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-3">
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative rounded-2xl p-6 flex flex-col transition-all duration-300 bg-card border-2 ${
-                plan.highlighted ? 'border-primary shadow-lg' : 'border-border'
+              className={`relative rounded-[32px] p-8 flex flex-col transition-all duration-500 bg-card border-[3px] ${
+                plan.highlighted ? 'border-primary shadow-2xl scale-105 z-10' : 'border-border opacity-90'
               }`}
             >
               {plan.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-primary-foreground text-xs font-bold px-4 py-1 rounded-full">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <span className="bg-primary text-primary-foreground text-[10px] font-black px-6 py-1.5 rounded-full uppercase tracking-widest shadow-lg">
                     {plan.badge}
                   </span>
                 </div>
               )}
 
-              <div className="text-center mb-6">
-                <div className="inline-flex items-center justify-center w-14 h-14 rounded-full mb-4 bg-primary text-white">
-                  <plan.icon className="w-7 h-7" />
+              <div className="text-center mb-8">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-3xl mb-4 bg-primary/10 text-primary">
+                  <plan.icon className="w-8 h-8" />
                 </div>
-                <h3 className="text-lg font-bold text-foreground">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground">{plan.subtitle}</p>
-                <div className="mt-3">
-                  <p className="text-sm text-muted-foreground line-through">De {plan.oldPrice} MZN</p>
-                  <p className="text-3xl font-bold text-primary">
-                    {plan.price} <span className="text-lg font-normal">MZN</span>
+                <h3 className="text-xl font-black text-foreground uppercase tracking-tight">{plan.name}</h3>
+                <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">{plan.subtitle}</p>
+                <div className="mt-6">
+                  <p className="text-xs text-muted-foreground line-through font-bold">De {plan.oldPrice} MZN</p>
+                  <p className="text-4xl font-black text-primary">
+                    {plan.price} <span className="text-base font-bold">MZN</span>
                   </p>
                 </div>
               </div>
 
-              <ul className="space-y-3 mb-8 flex-grow">
+              <ul className="space-y-4 mb-10 flex-grow">
                 {plan.features.map((feature, index) => (
-                  <li key={index} className="flex items-start gap-2">
-                    <Check className="w-5 h-5 flex-shrink-0 mt-0.5 text-primary" />
-                    <span className="text-sm text-foreground">{feature}</span>
+                  <li key={index} className="flex items-start gap-3">
+                    <Check className="w-5 h-5 flex-shrink-0 text-green-500" />
+                    <span className="text-sm font-bold text-foreground/80 leading-tight">{feature}</span>
                   </li>
                 ))}
               </ul>
 
-              <div className="space-y-3">
+              <div className="space-y-4">
                 <a href={plan.checkoutUrl} target="_blank" rel="noopener noreferrer" onClick={() => handleTrack(plan)}>
-                  <Button className="w-full py-6 text-base font-bold bg-primary hover:bg-primary/90 text-white shadow-md">
-                    {plan.highlighted ? 'QUERO MEU PIX AGORA' : 'OBTER ACESSO'}
+                  <Button className="w-full py-8 text-lg font-black bg-primary hover:bg-primary/90 text-white rounded-2xl shadow-xl shadow-primary/20 transition-all active:scale-95 uppercase tracking-tighter">
+                    ATIVAR MEU APP AGORA
                   </Button>
                 </a>
-                <p className="text-[11px] text-center text-muted-foreground font-medium italic uppercase">
-                  Confirme o PIN no seu celular após clicar.
-                </p>
+                
+                <div className="flex items-center justify-center gap-2 text-green-600">
+                   <ShieldCheck size={16} />
+                   <span className="text-[10px] font-black uppercase tracking-widest">Pagamento 100% Seguro</span>
+                </div>
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-16 text-center">
+           <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.3em] opacity-30">
+              BankPix SSA • Sistema de Pagamentos Criptografado
+           </p>
         </div>
       </div>
     </section>
