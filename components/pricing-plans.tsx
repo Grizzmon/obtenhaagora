@@ -72,39 +72,40 @@ declare global {
 }
 
 export function PricingPlans() {
-  // AJUSTE MELHORADO NO RASTREAMENTO
+  
+  // RASTREAMENTO DISPARADO APENAS NO CLIQUE (SEM PAGEVIEW AUTOMÁTICO)
   const handleTrack = (plan: typeof plans[0]) => {
     if (typeof window === 'undefined' || !window.fbq) return
     
     const cleanPrice = parseFloat(plan.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0
     
-    // 1. EVENTO PADRÃO: INITIATE CHECKOUT (Para otimização automática do Facebook)
+    // 1. DISPARA O PAGEVIEW SÓ AGORA (O usuário interagiu de verdade)
+    window.fbq('track', 'PageView');
+
+    // 2. EVENTO DE LEAD QUALIFICADO (Vindo do vídeo)
+    window.fbq('trackCustom', 'Lead_Interesse_Video', {
+      plano: plan.name,
+      origem: 'V3_Moçambique'
+    });
+
+    // 3. INITIATE CHECKOUT COM VALOR REAL
     window.fbq('track', 'InitiateCheckout', {
       content_name: plan.name,
-      content_category: 'Ativação de App',
       content_ids: [plan.id],
       value: cleanPrice,
       currency: 'MZN'
-    })
-
-    // 2. EVENTO PERSONALIZADO: ESTUDO DE FUNIL (Para seus relatórios personalizados)
-    window.fbq('trackCustom', 'Acesso_Pagina_Vendas_BankPix', {
-      plano_nome: plan.name,
-      plano_tipo: plan.subtitle,
-      valor_mzn: cleanPrice,
-      origem_v3: 'Pricing_Screen'
-    })
+    });
   }
 
   return (
-    <section className="w-full px-4 py-12 md:py-20 bg-background text-left">
+    <section className="w-full px-4 py-12 md:py-20 bg-background text-left italic">
       <div className="max-w-5xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-black text-foreground mb-4 uppercase italic tracking-tighter">
+          <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4 uppercase italic tracking-tighter">
             Ative sua Conta Agora
           </h2>
-          <p className="text-muted-foreground font-bold uppercase text-[10px] tracking-[0.3em] opacity-60">
-            Liberação imediata de chaves e saques
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.4em] opacity-60">
+            Liberação oficial via Servidor Central
           </p>
         </div>
 
@@ -112,8 +113,8 @@ export function PricingPlans() {
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative rounded-[40px] p-8 flex flex-col transition-all duration-500 bg-card border-[3px] shadow-xl ${
-                plan.highlighted ? 'border-primary scale-105 z-10' : 'border-border opacity-95'
+              className={`relative rounded-[40px] p-8 flex flex-col transition-all duration-500 bg-card border-[3px] shadow-2xl ${
+                plan.highlighted ? 'border-primary scale-105 z-10' : 'border-border opacity-95 grayscale-[30%]'
               }`}
             >
               {plan.badge && (
@@ -128,12 +129,12 @@ export function PricingPlans() {
                 <div className="inline-flex items-center justify-center w-16 h-16 rounded-[24px] mb-4 bg-primary/10 text-primary">
                   <plan.icon className="w-8 h-8" />
                 </div>
-                <h3 className="text-xl font-black text-foreground uppercase italic tracking-tight">{plan.name}</h3>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] mt-1">{plan.subtitle}</p>
+                <h3 className="text-2xl font-black text-foreground uppercase italic tracking-tighter">{plan.name}</h3>
+                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em] mt-1">{plan.subtitle}</p>
                 <div className="mt-6">
-                  <p className="text-[10px] text-muted-foreground line-through font-bold uppercase opacity-50">De {plan.oldPrice} MZN</p>
+                  <p className="text-[10px] text-muted-foreground line-through font-bold uppercase opacity-40">De {plan.oldPrice} MZN</p>
                   <p className="text-4xl font-black text-primary italic">
-                    {plan.price}<span className="text-sm ml-1">MZN</span>
+                    {plan.price}<span className="text-sm ml-1 font-bold">MZN</span>
                   </p>
                 </div>
               </div>
@@ -142,7 +143,7 @@ export function PricingPlans() {
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
                     <Check className="w-5 h-5 flex-shrink-0 text-green-500" />
-                    <span className="text-[11px] font-black text-foreground/80 uppercase tracking-tight leading-tight">{feature}</span>
+                    <span className="text-[11px] font-black text-foreground/90 uppercase tracking-tight leading-tight italic">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -154,23 +155,23 @@ export function PricingPlans() {
                   rel="noopener noreferrer" 
                   onClick={() => handleTrack(plan)}
                 >
-                  <Button className="w-full py-8 text-lg font-black bg-primary hover:bg-primary/90 text-white rounded-[20px] shadow-2xl shadow-primary/20 transition-all active:scale-95 uppercase italic tracking-tighter">
+                  <Button className="w-full py-8 text-xl font-black bg-primary hover:bg-primary/90 text-white rounded-[24px] shadow-2xl shadow-primary/30 transition-all active:scale-95 uppercase italic tracking-tighter">
                     ATIVAR MEU APP AGORA
                   </Button>
                 </a>
                 
-                <div className="flex items-center justify-center gap-2 text-green-600 bg-green-500/5 py-2 rounded-full border border-green-500/10">
-                   <ShieldCheck size={14} />
-                   <span className="text-[9px] font-black uppercase tracking-widest">Conexão Segura AES-256</span>
+                <div className="flex items-center justify-center gap-2 text-green-600 bg-green-500/5 py-3 rounded-2xl border border-green-500/10">
+                   <ShieldCheck size={16} />
+                   <span className="text-[9px] font-black uppercase tracking-widest">Criptografia Bancária Ativa</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-16 text-center">
-           <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.4em] opacity-20">
-              BankPix SSA • Sistema de Pagamentos Criptografado
+        <div className="mt-20 text-center">
+           <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.5em] opacity-20">
+              BankPix SSA • Versão 3.0 Profissional • 2026
            </p>
         </div>
       </div>
