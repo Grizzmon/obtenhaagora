@@ -1,5 +1,6 @@
 'use client'
 
+import { useEffect } from 'react'
 import { Check, Zap, Sparkles, Crown, ShieldCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -73,27 +74,32 @@ declare global {
 
 export function PricingPlans() {
   
-  // RASTREAMENTO DISPARADO APENAS NO CLIQUE (SEM PAGEVIEW AUTOMÁTICO)
+  // EVENTO PARA RESOLVER O SEU PONTO CEGO:
+  // Dispara assim que a página carrega para saber quem veio do vídeo
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.fbq) {
+      window.fbq('trackCustom', 'Abriu_Pagina_de_Planos', {
+        origem: 'Botao_do_VSL'
+      });
+    }
+  }, []);
+
   const handleTrack = (plan: typeof plans[0]) => {
     if (typeof window === 'undefined' || !window.fbq) return
     
     const cleanPrice = parseFloat(plan.price.replace(/[^0-9.,]/g, '').replace(',', '.')) || 0
     
-    // 1. DISPARA O PAGEVIEW SÓ AGORA (O usuário interagiu de verdade)
+    // Dispara o PageView e o Checkout apenas no clique real
     window.fbq('track', 'PageView');
-
-    // 2. EVENTO DE LEAD QUALIFICADO (Vindo do vídeo)
-    window.fbq('trackCustom', 'Lead_Interesse_Video', {
-      plano: plan.name,
-      origem: 'V3_Moçambique'
-    });
-
-    // 3. INITIATE CHECKOUT COM VALOR REAL
     window.fbq('track', 'InitiateCheckout', {
       content_name: plan.name,
-      content_ids: [plan.id],
       value: cleanPrice,
       currency: 'MZN'
+    });
+
+    window.fbq('trackCustom', 'Escolheu_Plano_Especifico', {
+      plano: plan.name,
+      valor: cleanPrice
     });
   }
 
@@ -104,8 +110,8 @@ export function PricingPlans() {
           <h2 className="text-3xl md:text-5xl font-black text-foreground mb-4 uppercase italic tracking-tighter">
             Ative sua Conta Agora
           </h2>
-          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.4em] opacity-60">
-            Liberação oficial via Servidor Central
+          <p className="text-[10px] text-muted-foreground font-black uppercase tracking-[0.4em] opacity-40">
+            Liberação oficial • SSA Moçambique
           </p>
         </div>
 
@@ -114,12 +120,12 @@ export function PricingPlans() {
             <div
               key={plan.id}
               className={`relative rounded-[40px] p-8 flex flex-col transition-all duration-500 bg-card border-[3px] shadow-2xl ${
-                plan.highlighted ? 'border-primary scale-105 z-10' : 'border-border opacity-95 grayscale-[30%]'
+                plan.highlighted ? 'border-primary scale-105 z-10' : 'border-border opacity-95'
               }`}
             >
               {plan.badge && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-primary text-primary-foreground text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-lg">
+                  <span className="bg-primary text-primary-foreground text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest">
                     {plan.badge}
                   </span>
                 </div>
@@ -130,9 +136,8 @@ export function PricingPlans() {
                   <plan.icon className="w-8 h-8" />
                 </div>
                 <h3 className="text-2xl font-black text-foreground uppercase italic tracking-tighter">{plan.name}</h3>
-                <p className="text-[9px] font-black text-muted-foreground uppercase tracking-[0.3em] mt-1">{plan.subtitle}</p>
                 <div className="mt-6">
-                  <p className="text-[10px] text-muted-foreground line-through font-bold uppercase opacity-40">De {plan.oldPrice} MZN</p>
+                  <p className="text-[10px] text-muted-foreground line-through font-bold opacity-40 uppercase">De {plan.oldPrice} MZN</p>
                   <p className="text-4xl font-black text-primary italic">
                     {plan.price}<span className="text-sm ml-1 font-bold">MZN</span>
                   </p>
@@ -142,8 +147,8 @@ export function PricingPlans() {
               <ul className="space-y-4 mb-10 flex-grow">
                 {plan.features.map((feature, index) => (
                   <li key={index} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 flex-shrink-0 text-green-500" />
-                    <span className="text-[11px] font-black text-foreground/90 uppercase tracking-tight leading-tight italic">{feature}</span>
+                    <Check className="w-4 h-4 flex-shrink-0 text-green-500" />
+                    <span className="text-[11px] font-black text-foreground/90 uppercase leading-tight italic">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -155,24 +160,17 @@ export function PricingPlans() {
                   rel="noopener noreferrer" 
                   onClick={() => handleTrack(plan)}
                 >
-                  <Button className="w-full py-8 text-xl font-black bg-primary hover:bg-primary/90 text-white rounded-[24px] shadow-2xl shadow-primary/30 transition-all active:scale-95 uppercase italic tracking-tighter">
+                  <Button className="w-full py-8 text-xl font-black bg-primary hover:bg-primary/90 text-white rounded-[24px] shadow-2xl transition-all active:scale-95 uppercase italic tracking-tighter">
                     ATIVAR MEU APP AGORA
                   </Button>
                 </a>
-                
-                <div className="flex items-center justify-center gap-2 text-green-600 bg-green-500/5 py-3 rounded-2xl border border-green-500/10">
+                <div className="flex items-center justify-center gap-2 text-green-600 bg-green-500/5 py-3 rounded-2xl border border-green-500/10 uppercase">
                    <ShieldCheck size={16} />
-                   <span className="text-[9px] font-black uppercase tracking-widest">Criptografia Bancária Ativa</span>
+                   <span className="text-[9px] font-black tracking-widest">Pagamento Protegido</span>
                 </div>
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-20 text-center">
-           <p className="text-[9px] text-muted-foreground font-black uppercase tracking-[0.5em] opacity-20">
-              BankPix SSA • Versão 3.0 Profissional • 2026
-           </p>
         </div>
       </div>
     </section>
