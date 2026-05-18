@@ -60,7 +60,7 @@ const plans = [
       'Garantia de Devoluçao de 90 dias',
       'Atualizaçoes automaticas do app',
     ],
-    checkoutUrl: 'https://pay.kambafy.com/checkout/7ee14786-af98-49e1-a3b9-272d5857c3d0',
+    checkoutUrl: 'https://pay.tutora.co.mz/5c847709b327447683e6507c2d521da1',
     highlighted: false,
     badge: null,
   },
